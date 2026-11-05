@@ -96,7 +96,13 @@ nonisolated final class EventTapManager: @unchecked Sendable {
     }
 
     private func installTap() -> Bool {
-        let mask = (1 << CGEventType.keyDown.rawValue) | (1 << CGEventType.keyUp.rawValue) | (1 << CGEventType.flagsChanged.rawValue)
+        let mask =
+            (1 << CGEventType.keyDown.rawValue)
+            | (1 << CGEventType.keyUp.rawValue)
+            | (1 << CGEventType.flagsChanged.rawValue)
+            | (1 << CGEventType.leftMouseDown.rawValue)
+            | (1 << CGEventType.leftMouseUp.rawValue)
+            | (1 << CGEventType.leftMouseDragged.rawValue)
 
         let unmanagedSelf = Unmanaged.passUnretained(self).toOpaque()
 

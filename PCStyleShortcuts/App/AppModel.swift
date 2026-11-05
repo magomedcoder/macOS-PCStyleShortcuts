@@ -33,6 +33,7 @@ final class AppModel {
         showOnboarding = !loaded.hasCompletedOnboarding
 
         engine.apply(settings: loaded)
+        FrontmostContext.startMonitoringIfNeeded()
 
         applyDockPolicy()
         startAccessibilityPolling()

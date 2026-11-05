@@ -31,11 +31,15 @@ nonisolated final class RemapEngine: @unchecked Sendable {
     }
 
     func handle(event: CGEvent, type: CGEventType) -> CGEvent? {
-        if type == .flagsChanged {
+        switch type {
+        case .leftMouseDown, .leftMouseUp, .leftMouseDragged:
+            FrontmostContext.noteMouseEvent(type: type, event: event)
+            return event
+        case .flagsChanged:
             return handleFlagsChanged(event)
-        }
-
-        guard type == .keyDown || type == .keyUp else {
+        case .keyDown, .keyUp:
+            break
+        default:
             return event
         }
 
@@ -56,10 +60,12 @@ nonisolated final class RemapEngine: @unchecked Sendable {
             return event
         }
 
-        if smartTerminal,
-           FrontmostContext.shouldKeepShellShortcut(actionID: rule.actionID) {
-            AppLog.remap.debug("Shell passthrough \(rule.actionID, privacy: .public)")
-            return event
+        if smartTerminal {
+            FrontmostContext.startMonitoringIfNeeded()
+            if FrontmostContext.shouldKeepShellShortcut(actionID: rule.actionID) {
+                AppLog.remap.debug("Shell passthrough \(rule.actionID, privacy: .public)")
+                return event
+            }
         }
 
         switch rule.effect {
